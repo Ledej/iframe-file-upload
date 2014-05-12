@@ -202,23 +202,19 @@
             // actual payload is embedded in a `<textarea>` element, and
             // prepares the required conversions to be made in that case.
             iframe.one("load", function() {
-              var doc = this.contentWindow ? this.contentWindow.document :
-                (this.contentDocument ? this.contentDocument : this.document),
-                root = doc.documentElement ? doc.documentElement : doc.body,
-                textarea = root.getElementsByTagName("textarea")[0],
-                type = textarea && textarea.getAttribute("data-type") || null,
-                status = textarea && textarea.getAttribute("data-status") || 200,
-                statusText = textarea && textarea.getAttribute("data-statusText") || "OK",
-                content = {
-                  html: root.innerHTML,
-                  text: type ?
-                    textarea.value :
-                    root ? (root.textContent || root.innerText) : null
-                };
-              cleanUp();
-              completeCallback(status, statusText, content, type ?
-                ("Content-Type: " + type) :
-                null);
+              // Expect the answer from api to send a message to its parent.window
+              // originalEvent.data contains the message data
+              var handleMessage = function(e) {
+                var data = e.originalEvent.data;
+                cleanUp();
+                completeCallback(data.status_code, 
+                                 data.status_text, 
+                                 {json: data.json, text: JSON.stringify(data.json)}, 
+                                 "Content-Type: json"
+                );
+              };
+
+              $(window).off('message').on('message', handleMessage);
             });
 
             // Now that the load handler has been set up, submit the form.
