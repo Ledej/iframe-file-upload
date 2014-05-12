@@ -9,7 +9,7 @@ module.exports = function (grunt) {
     jshint: {
       files: [
         'Gruntfile.js',
-        'jquery.iframe-transport.js'
+        'iframe-file-upload.js'
       ],
       options: {
         jshintrc: '.jshintrc'
@@ -21,13 +21,13 @@ module.exports = function (grunt) {
       },
       build: {
         files: {
-          'build/jquery.iframe-transport-<%= pkg.version %>.min.js': 'jquery.iframe-transport.js'
+          'build/iframe-file-upload-<%= pkg.version %>.min.js': 'iframe-file-upload.js'
         }
       }
     },
     docco: {
       debug: {
-        src: ['jquery.iframe-transport.js'],
+        src: ['iframe-file-upload.js'],
         options: {
           output: 'docs/'
         }
@@ -35,7 +35,7 @@ module.exports = function (grunt) {
     },
     copy: {
       doc: {
-        src: 'docs/jquery.iframe-transport.html',
+        src: 'docs/iframe-file-upload.html',
         dest: 'docs/index.html',
         nonull: true
       }
@@ -56,7 +56,7 @@ module.exports = function (grunt) {
             var multiparty = require('multiparty'),
                 util = require('util');
             middlewares.unshift(function(req, res, next) {
-              if (req.url === '/jquery.iframe-transport.js') {
+              if (req.url === '/iframe-file-upload.js') {
                 return connect.static(__dirname)(req, res, next);
               }
               if (req.url !== '/upload' || req.method.toUpperCase() !== 'POST') {
